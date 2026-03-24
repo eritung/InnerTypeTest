@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  min-width: 320px;
+  background: #f7f5f2;
+  color: #1a1410;
+}
+
+button {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+a {
+  color: inherit;
+}
