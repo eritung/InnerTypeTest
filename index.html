@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="以情境題切入的 MBTI 心理測驗網站。" />
-  <title>你的人格地貌｜MBTI 心理測驗</title>
+  <meta name="description" content="用情境題慢慢看出你的做事節奏與人格傾向。" />
+  <title>你的人格地貌｜心理測驗</title>
   <style>
     :root {
       --bg: #f7f5f2;
@@ -57,7 +57,7 @@
     .quiz-card {
       position: relative;
       width: 100%;
-      max-width: 760px;
+      max-width: 780px;
       background: var(--card);
       border: 1px solid rgba(255,255,255,.92);
       backdrop-filter: blur(10px);
@@ -67,7 +67,7 @@
       z-index: 1;
     }
     .panel { padding: 42px 42px 38px; }
-    .fade-up { animation: fadeUp .4s ease both; }
+    .fade-up { animation: fadeUp .38s ease both; }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
@@ -99,7 +99,7 @@
       color: #b7a79a;
       font-weight: 700;
     }
-    .hero-title, .question-title, .result-name, .result-label {
+    .hero-title, .question-title, .result-name, .result-label, .option-title {
       font-family: "DM Serif Display", Georgia, serif;
     }
     .hero-title {
@@ -109,7 +109,7 @@
       letter-spacing: -0.02em;
     }
     .hero-title em { color: var(--blue); font-style: italic; }
-    .hero-desc, .result-description, .dimension-copy, .tip-copy {
+    .hero-desc, .result-description, .dimension-copy, .analysis-subcopy, .option-desc {
       color: #6f6258;
       line-height: 1.8;
       font-size: 15px;
@@ -122,19 +122,19 @@
       justify-content: center;
       margin: 28px 0 34px;
     }
-    .mini-pill, .trait-pill, .meta-pill {
+    .mini-pill, .trait-pill, .meta-pill, .info-chip {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       border-radius: 999px;
       white-space: nowrap;
     }
-    .mini-pill, .meta-pill {
+    .mini-pill, .meta-pill, .info-chip {
       padding: 7px 14px;
       font-size: 12px;
       font-weight: 700;
     }
-    .meta-pill { gap: 8px; }
+    .info-chip { gap: 8px; }
     .primary-button, .ghost-button, .next-button {
       border: 0;
       border-radius: 999px;
@@ -178,7 +178,7 @@
     .progress-fill {
       height: 100%;
       border-radius: inherit;
-      transition: width .25s ease;
+      transition: width .28s ease;
     }
     .question-meta {
       display: flex;
@@ -199,10 +199,9 @@
     .question-emoji { font-size: 32px; margin-bottom: 8px; }
     .question-title {
       margin: 0;
-      font-size: 30px;
-      line-height: 1.35;
+      font-size: 31px;
+      line-height: 1.36;
     }
-    .tip-copy { font-size: 13px; margin: 10px 0 0; color: #9a8d83; }
     .option-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -211,7 +210,7 @@
     .option-card {
       width: 100%;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: flex-start;
       border: 1.5px solid var(--line);
       background: #faf9f7;
@@ -220,7 +219,8 @@
       text-align: left;
       color: #3d332c;
       line-height: 1.6;
-      min-height: 110px;
+      min-height: 128px;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, box-shadow .16s ease;
     }
     .option-card:hover {
       transform: translateY(-2px);
@@ -240,6 +240,21 @@
       min-width: 18px;
       padding-top: 2px;
     }
+    .option-copy { min-width: 0; }
+    .option-title {
+      display: block;
+      margin: 0 0 4px;
+      font-size: 18px;
+      line-height: 1.22;
+      color: inherit;
+    }
+    .option-desc {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #786a61;
+    }
+    .option-card.is-selected .option-desc { color: #50657f; }
     .next-button {
       width: 100%;
       margin-top: 24px;
@@ -281,7 +296,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-bottom: 22px;
+      margin: 0 0 26px;
     }
     .trait-pill {
       padding: 7px 14px;
@@ -291,14 +306,17 @@
     .analysis-box {
       background: #faf9f7;
       border-radius: 22px;
-      padding: 22px 20px 8px;
+      padding: 24px 20px 10px;
+      margin-top: 26px;
       margin-bottom: 18px;
     }
+    .analysis-title { margin-bottom: 12px; }
+    .analysis-subcopy { margin: 0 0 18px; font-size: 14px; }
     .dimension-block {
       border: 1px solid var(--line);
       border-radius: 18px;
       background: #fff;
-      padding: 16px 16px 14px;
+      padding: 17px 16px 15px;
       margin-bottom: 14px;
     }
     .dimension-top {
@@ -306,7 +324,7 @@
       justify-content: space-between;
       align-items: flex-start;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .dimension-title {
       margin: 0;
@@ -314,11 +332,11 @@
       font-weight: 800;
       color: #3d332c;
     }
-    .dimension-dominant {
-      margin: 4px 0 0;
-      font-size: 12px;
-      color: #8b7d72;
-      font-weight: 700;
+    .dimension-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
     }
     .dimension-score {
       font-size: 12px;
@@ -331,35 +349,41 @@
       justify-content: space-between;
       font-size: 12px;
       color: #7b6e66;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
     .dimension-track {
-      height: 8px;
+      position: relative;
+      height: 10px;
       background: #eee7df;
       border-radius: 999px;
       overflow: hidden;
-      margin-bottom: 10px;
-    }
-    .split-track {
+      margin-bottom: 12px;
       display: flex;
+    }
+    .dimension-track::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 1px;
+      background: rgba(255,255,255,.72);
+      z-index: 1;
     }
     .dimension-segment {
       height: 100%;
-      transition: flex-grow .45s ease;
+      min-width: 12%;
+      transition: width .35s ease;
     }
     .dimension-segment.left {
       border-radius: 999px 0 0 999px;
-      opacity: .95;
+      opacity: .96;
     }
     .dimension-segment.right {
       border-radius: 0 999px 999px 0;
-      opacity: .55;
+      opacity: .56;
     }
-    .dimension-fill {
-      height: 100%;
-      border-radius: inherit;
-      transition: width .45s ease;
-    }
+    .dimension-copy { margin: 0; font-size: 14px; }
     .action-row {
       display: flex;
       flex-wrap: wrap;
@@ -388,240 +412,141 @@
       .action-row > * { width: 100%; }
       .primary-button.compact, .ghost-button { width: 100%; }
       .dimension-top { flex-direction: column; }
+      .dimension-score { white-space: normal; }
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script>
-    const AXIS_COLORS = { EI: '#6A90C4', SN: '#5EA87A', TF: '#C4956A', JP: '#9B72C0' };
-    const AXIS_BG = { EI: '#EBF2FB', SN: '#EBF5EC', TF: '#FDF3E9', JP: '#F3EBF8' };
-    const AXIS_LABEL = { EI: '能量來源', SN: '資訊接收', TF: '決策方式', JP: '工作節奏' };
-
-    const AXIS_META = {
-      EI: {
-        left: '外向 E', right: '內向 I',
-        leftDesc: '你在職場偏向先互動、先開聊，會從交流中把局面推進。',
-        rightDesc: '你在職場偏向先整理、先思考，會在穩定內化後再出手。'
-      },
-      SN: {
-        left: '實感 S', right: '直覺 N',
-        leftDesc: '你比較信任具體資訊、既有經驗與可落地的執行線索。',
-        rightDesc: '你比較容易先看到可能性、概念連結與更遠的方向感。'
-      },
-      TF: {
-        left: '思考 T', right: '情感 F',
-        leftDesc: '你決策時重視邏輯、效率與標準，會先問怎樣最合理。',
-        rightDesc: '你決策時重視感受、氛圍與關係，會先問這樣對人好不好。'
-      },
-      JP: {
-        left: '判斷 J', right: '感知 P',
-        leftDesc: '你工作時喜歡先定節點與進度，掌控感會讓你更穩。',
-        rightDesc: '你工作時喜歡保留彈性與臨場應變，空間感會讓你更活。'
-      }
-    };
-
-    const QUESTIONS = [
-      {
-        id: 1, axis: 'EI', emoji: '🧑‍💼',
-        text: '剛進一場跨部門會議，大家還有點冷，你通常會怎麼開局？',
-        options: [
-          { label: '直接開口暖場，把人拉進討論節奏', scores: { E: 2 } },
-          { label: '先接別人的話，順勢把交流帶起來', scores: { E: 1 } },
-          { label: '先聽一下每個人的方向，再挑時機發言', scores: { I: 1 } },
-          { label: '先做自己的觀察筆記，等資訊齊了再說', scores: { I: 2 } },
-        ]
-      },
-      {
-        id: 2, axis: 'EI', emoji: '🔋',
-        text: '連開好幾場會後，你最需要哪種方式回血？',
-        options: [
-          { label: '去找同事聊天吐槽一下，順便再吸一點人類能量', scores: { E: 2 } },
-          { label: '走去茶水間晃一圈，邊聊邊放空', scores: { E: 1 } },
-          { label: '戴上耳機自己整理一下思緒，再回戰場', scores: { I: 1 } },
-          { label: '短暫消失一下，安靜獨處才是真續命', scores: { I: 2 } },
-        ]
-      },
-      {
-        id: 3, axis: 'EI', emoji: '🤝',
-        text: '你更常被同事怎麼形容？',
-        options: [
-          { label: '像推進器，會主動把人跟事都串起來', scores: { E: 2 } },
-          { label: '蠻好聊的，合作起來很有現場感', scores: { E: 1 } },
-          { label: '很穩，講話不多但每次都講重點', scores: { I: 1 } },
-          { label: '像隱藏王牌，通常安靜但一出手就很準', scores: { I: 2 } },
-        ]
-      },
-      {
-        id: 4, axis: 'SN', emoji: '📊',
-        text: '接到一個新專案時，你會先抓哪種資訊？',
-        options: [
-          { label: '先盤現況、限制、時程、資源，地板先踩穩', scores: { S: 2 } },
-          { label: '先看過往案例，找得到可套用的操作邏輯', scores: { S: 1 } },
-          { label: '先想這件事有沒有更有意思的切法', scores: { N: 1 } },
-          { label: '先看它背後的機會點，想像可以長成什麼樣', scores: { N: 2 } },
-        ]
-      },
-      {
-        id: 5, axis: 'SN', emoji: '🧠',
-        text: '老闆丟一句很抽象的需求給你，你第一反應比較像？',
-        options: [
-          { label: '先追問清楚具體交付內容與成功條件', scores: { S: 2 } },
-          { label: '先拆出目前已知條件，邊做邊補細節', scores: { S: 1 } },
-          { label: '先抓大方向，模糊也沒關係，腦中先組版圖', scores: { N: 1 } },
-          { label: '先聯想多個可能版本，腦內先開平行宇宙', scores: { N: 2 } },
-        ]
-      },
-      {
-        id: 6, axis: 'SN', emoji: '🔍',
-        text: '在簡報或企劃裡，你最容易先看到哪一層？',
-        options: [
-          { label: '數字、證據、流程有沒有站得住腳', scores: { S: 2 } },
-          { label: '內容結構夠不夠清楚，執行上有沒有破口', scores: { S: 1 } },
-          { label: '概念有沒有亮點，能不能再往上拉一層', scores: { N: 1 } },
-          { label: '整體敘事與象徵感，有沒有長出記憶點', scores: { N: 2 } },
-        ]
-      },
-      {
-        id: 7, axis: 'TF', emoji: '⚖️',
-        text: '同事提案被打槍，情緒明顯掉下去，你通常會？',
-        options: [
-          { label: '先幫他拆問題，直接指出下一版怎麼救', scores: { T: 2 } },
-          { label: '陪他看哪裡可調，重點是把局勢拉回可控', scores: { T: 1 } },
-          { label: '先接住情緒，讓他知道這不是他一個人的鍋', scores: { F: 1 } },
-          { label: '先安撫再談方法，人穩了事情才會穩', scores: { F: 2 } },
-        ]
-      },
-      {
-        id: 8, axis: 'TF', emoji: '🧩',
-        text: '做決策時，哪種理由最能說服你？',
-        options: [
-          { label: '數據、邏輯、風險評估完整，這樣我買單', scores: { T: 2 } },
-          { label: '至少要合理、能解釋、能執行', scores: { T: 1 } },
-          { label: '這做法比較顧到合作感與團隊狀態', scores: { F: 1 } },
-          { label: '這件事雖不完美，但對人更有溫度與長期價值', scores: { F: 2 } },
-        ]
-      },
-      {
-        id: 9, axis: 'TF', emoji: '📣',
-        text: '當你要給別人回饋時，通常更接近哪一種風格？',
-        options: [
-          { label: '直接講重點，不繞路最有效率', scores: { T: 2 } },
-          { label: '先講結論，再補充理由與建議', scores: { T: 1 } },
-          { label: '會修飾語氣，盡量讓對方好吸收', scores: { F: 1 } },
-          { label: '很在意對方接收感受，會顧內容也顧情緒', scores: { F: 2 } },
-        ]
-      },
-      {
-        id: 10, axis: 'JP', emoji: '📅',
-        text: '面對截止日前一週，你的狀態比較像？',
-        options: [
-          { label: '進度表早排好了，現在只是照表推進', scores: { J: 2 } },
-          { label: '主要框架都已經定好，剩下是微調', scores: { J: 1 } },
-          { label: '大方向有，但我會邊做邊調最順的版本', scores: { P: 1 } },
-          { label: '壓線反而比較有靈感，靈魂都在最後衝刺時上線', scores: { P: 2 } },
-        ]
-      },
-      {
-        id: 11, axis: 'JP', emoji: '🗂️',
-        text: '你桌面、檔案、代辦清單的真實樣貌更像哪種？',
-        options: [
-          { label: '分類清楚，命名有規則，找資料像開外掛', scores: { J: 2 } },
-          { label: '大致有秩序，至少我自己找得到', scores: { J: 1 } },
-          { label: '有點自由流動，但我腦內有我自己的地圖', scores: { P: 1 } },
-          { label: '混亂中自有宇宙，別碰就還能活', scores: { P: 2 } },
-        ]
-      },
-      {
-        id: 12, axis: 'JP', emoji: '🚨',
-        text: '專案半路突然改需求，你多半會？',
-        options: [
-          { label: '先重新排優先順序與時程，讓一切回到軌道', scores: { J: 2 } },
-          { label: '雖然煩，但先重整架構，再繼續推', scores: { J: 1 } },
-          { label: '我可以順著新局面改，彈性本來就是工作的一部分', scores: { P: 1 } },
-          { label: '變動就變動，現場抓節奏我反而更來勁', scores: { P: 2 } },
-        ]
-      },
-    ];
-
-    const RESULTS = {
-      INTJ:{name:'深山雲霧',emoji:'🏔️',tagline:'安靜不是退場，是你在高處佈局',color:'#4A6FA5',bg:'#EEF3FA',traits:['策略型思考','長線佈局','獨立判斷'],desc:'你在職場像高山裡的雲霧，平常不一定最吵，但方向感超強。你擅長看全局、提早預判問題，也很會把事情往更有效的結構推進。你不是想掌控一切，你只是看不得明明可以更好卻還在原地打轉。'},
-      INTP:{name:'星空沙漠',emoji:'🌌',tagline:'你不是分心，你是在同時跑很多個厲害的腦迴路',color:'#2D3561',bg:'#ECEEF8',traits:['抽象分析','知識連結','創意拆解'],desc:'你在職場很像星空下的沙漠，外表安靜，腦內卻超熱鬧。你擅長拆解問題、提出不同觀點，也常在別人沒想到的地方挖出新解法。你最強的不是跟著流程走，而是讓人突然發現：欸，好像真的可以這樣想。'},
-      ENTJ:{name:'城市天際線',emoji:'🌃',tagline:'局面越大，你越像終於上線',color:'#1A1A2E',bg:'#EBEBF5',traits:['決策推進','領導統整','高效執行'],desc:'你在職場像俐落發亮的城市天際線，清楚、強勢、有推進力。你很會整理混亂，也很會把人和資源拉到同一條線上。別人可能還在猶豫，你已經在想怎麼把結果做出來。'},
-      ENTP:{name:'活火山',emoji:'🌋',tagline:'你的點子不是多，是多到像在溢出',color:'#8B2500',bg:'#FAEEE8',traits:['高能發想','辯證能力','打破框架'],desc:'你在職場像活火山，反應快、點子多、超會把無聊會議炸出新火花。你不喜歡被過時規則綁住，也很擅長用新的切法讓事情重新有戲。你最大的本事，是把看似卡住的局突然扳成另一條路。'},
-      INFJ:{name:'極光夜空',emoji:'🌠',tagline:'你看的不只任務，還有人心和意義',color:'#4B0082',bg:'#F0ECF8',traits:['深度洞察','共感理解','理想驅動'],desc:'你在職場像極光夜空，表面平靜，但很會察覺空氣裡那些沒被說出來的訊號。你常常一邊做事，一邊也在想這件事對人、對團隊、對整體方向到底值不值得。你不是太敏感，你只是感知範圍比較廣。'},
-      INFP:{name:'秘境瀑布',emoji:'🍃',tagline:'溫柔不等於弱，很多靈感都長在你這種人身上',color:'#2E6B8A',bg:'#EAF4F8',traits:['價值感強','創意表達','細膩真誠'],desc:'你在職場像森林深處的瀑布，不一定搶前排，但你的觀點很真、很有自己的濃度。你很在意做的事是否跟價值一致，也常用獨特的方式把感受變成有感染力的內容。你不是慢熱，你只是對真實特別有要求。'},
-      ENFJ:{name:'向日葵田',emoji:'🌻',tagline:'你很會把人照亮，然後順便把局帶起來',color:'#8B6914',bg:'#FDF8E8',traits:['團隊感召','溝通協調','溫暖領導'],desc:'你在職場像一整片向日葵田，很會接住人，也很會推動事情往前。你能看見別人的亮點，知道什麼時候該鼓勵、什麼時候該整隊。跟你合作常有種感覺：明明事情很多，但莫名就比較願意一起撐。'},
-      ENFP:{name:'彩虹雨後',emoji:'🌈',tagline:'你是那種能把企劃做出靈魂的人',color:'#C4500A',bg:'#FDF3EC',traits:['靈感豐富','感染力強','人味連結'],desc:'你在職場像雨後彩虹，腦袋活、情緒感受力也強，常能把一件原本普通的任務做得更有亮點。你很懂人，也很懂怎麼把內容做得有溫度。你最強的不是照規則完成，而是讓事情完成後真的有人記得。'},
-      ISTJ:{name:'橡木老林',emoji:'🌲',tagline:'你不是古板，你是讓世界不要炸掉的那群人',color:'#2D5016',bg:'#EFF5E8',traits:['穩定可靠','細節管理','承諾感強'],desc:'你在職場像一片老林，安靜但超穩。你重視規則、細節與責任感，事情交給你通常就是讓人放心。你不太愛浮誇，但你的存在本身就很有份量，像專案的地基一樣，平常不搶鏡，卻不能沒有你。'},
-      ISFJ:{name:'靜謐湖泊',emoji:'🏞️',tagline:'你的穩，是很多人工作日常的安全感來源',color:'#1A5276',bg:'#EAF2F8',traits:['細膩照顧','穩定支援','高配合度'],desc:'你在職場像一座靜湖，溫柔、穩定，又很會照顧細節。你經常默默補位，讓合作變順、讓同事不至於太慌。你的強不是大聲，而是你總能在別人需要時剛好出現在對的位置。'},
-      ESTJ:{name:'繁忙港口',emoji:'⚓',tagline:'你很知道怎樣把事送上岸，而且準時',color:'#34495E',bg:'#EBF0F4',traits:['組織管理','果斷執行','高標準'],desc:'你在職場像高效運轉的港口，節奏清楚、動作俐落、資源安排得明明白白。你擅長制定規則與流程，讓專案不要陷入無效消耗。別人可能覺得你要求高，但老實說，有你在事情真的比較會成。'},
-      ESFJ:{name:'花園小鎮',emoji:'🌺',tagline:'你讓團隊不像上班，更像一群人真的在一起做事',color:'#7D3C98',bg:'#F5EBF8',traits:['社群凝聚','氛圍維護','同理協作'],desc:'你在職場像一座花園小鎮，有人味、有溫度，也很會把關係照顧好。你擅長感受團隊氛圍，知道怎樣讓合作不只是完成工作，而是真的形成互相支持的節奏。你不是在討好，你是在經營讓人願意留下的感覺。'},
-      ISTP:{name:'荒野峽谷',emoji:'🏜️',tagline:'話不多，但一到出事現場你就會變 MVP',color:'#784212',bg:'#F5EDE0',traits:['冷靜排錯','實作導向','臨場解決'],desc:'你在職場像荒野峽谷，低調、耐打、很有自己的判斷。你喜歡用實際驗證取代空談，遇到狀況時通常能快速找到問題點。你不是特別愛表現，但真的出包時，大家很容易第一個想到你。'},
-      ISFP:{name:'海岸日落',emoji:'🌅',tagline:'你不是在摸魚，你是在守住做事的手感與溫度',color:'#C0392B',bg:'#FAECEA',traits:['美感直覺','真實感受','柔韌應對'],desc:'你在職場像海岸日落，有自己的節奏與美感標準。你對細節、氛圍、呈現方式很敏銳，也很在意作品是不是有靈魂。你不一定想成為中心，但你做出來的東西往往很有個人質感。'},
-      ESTP:{name:'急湍激流',emoji:'🌊',tagline:'現場越亂，你越像終於找到主場',color:'#0E6655',bg:'#E8F8F5',traits:['快速反應','高壓應變','行動力強'],desc:'你在職場像一股急流，速度快、判斷快、出手也快。你很適合需要臨場決策、快速協調的情境，越是現場變動，你反而越能抓到節奏。你不太喜歡空轉，因為你本來就是那種先動再解的人。'},
-      ESFP:{name:'熱帶海灘',emoji:'🏖️',tagline:'有你在的團隊，比較有生命力也比較有笑聲',color:'#0A74A4',bg:'#E8F5FC',traits:['感染力強','互動自然','現場感十足'],desc:'你在職場像熱帶海灘，明亮、自在，很會把人帶進舒服又有活力的互動節奏。你擅長把壓力感拆掉，讓合作過程不至於太僵。你不是只會活絡氣氛，你其實也很懂怎樣讓人更願意一起往前。'}
+    const AXIS_COLORS = {"EI": "#6A90C4", "SN": "#5EA87A", "TF": "#C4956A", "JP": "#9B72C0"};
+    const AXIS_BG = {"EI": "#EBF2FB", "SN": "#EBF5EC", "TF": "#FDF3E9", "JP": "#F3EBF8"};
+    const AXIS_LABEL = {"EI": "能量來源", "SN": "資訊接收", "TF": "決策方式", "JP": "工作節奏"};
+    const AXIS_META = {"EI": {"left": "外向 E", "right": "內向 I", "leftDesc": "你比較常透過互動啟動狀態，邊說邊想、邊聊邊推進，能從交流裡拿到行動感。", "rightDesc": "你比較常先在內部整理好想法，再精準出手；不是慢，是你會先把內容想清楚。"}, "SN": {"left": "實感 S", "right": "直覺 N", "leftDesc": "你更信任具體資訊、實際限制與可落地的方法，喜歡踩在可驗證的地面上做判斷。", "rightDesc": "你更容易先看到概念、可能性與方向延伸，擅長從零散訊號裡長出更大的畫面。"}, "TF": {"left": "思考 T", "right": "情感 F", "leftDesc": "你判斷事情時偏向先看邏輯、效率與代價，想把問題處理到最合理的版本。", "rightDesc": "你判斷事情時偏向先看感受、關係與接受度，會在結果之外多照顧人的狀態。"}, "JP": {"left": "判斷 J", "right": "感知 P", "leftDesc": "你做事喜歡先把節點、範圍與順序排出來，掌握節奏會讓你更穩。", "rightDesc": "你做事喜歡保留彈性與可變空間，常能在變動裡抓到更順手的做法。"}};
+    const AXIS_PAIR = { EI:['E','I'], SN:['S','N'], TF:['T','F'], JP:['J','P'] };
+    const QUESTIONS = [{"id": 1, "axis": "EI", "emoji": "🪑", "bias": 1.0, "text": "一場第一次碰面的合作會議剛開始，你通常怎麼進場？", "options": [{"title": "先暖場開局", "desc": "主動丟一句好接的話，把大家帶進能對話的狀態。", "side": "E", "intensity": 2}, {"title": "先找人試水溫", "desc": "跟身旁或關鍵角色聊兩句，邊互動邊摸清現場溫度。", "side": "E", "intensity": 1}, {"title": "先觀察再接話", "desc": "先聽幾輪，摸到節奏後再讓自己的發言進場。", "side": "I", "intensity": 1}, {"title": "先在心裡排稿", "desc": "不急著出聲，等想法整理到位才會開口。", "side": "I", "intensity": 2}]}, {"id": 2, "axis": "EI", "emoji": "🔋", "bias": 1.08, "text": "連開三場會後，你最需要哪種方式回神？", "options": [{"title": "找人聊兩句回血", "desc": "只要有互動、有笑點，電量就會慢慢回來。", "side": "E", "intensity": 2}, {"title": "去茶水間晃一下", "desc": "有點人聲和鬆散聊天，就能把狀態拉回來。", "side": "E", "intensity": 1}, {"title": "戴耳機沉一下", "desc": "先把外界關掉，讓腦袋有時間自己排序。", "side": "I", "intensity": 1}, {"title": "安靜消失十分鐘", "desc": "沒有人來敲你，才是真正有效的續命方式。", "side": "I", "intensity": 2}]}, {"id": 3, "axis": "EI", "emoji": "🤝", "bias": 1.16, "text": "第一次跟新團隊合作，要快速分工時你更像哪一種？", "options": [{"title": "邊聊邊分配", "desc": "透過互動很快就能知道誰適合接哪一塊。", "side": "E", "intensity": 2}, {"title": "先拋幾個話題", "desc": "把陌生感拆掉後，後面的合作會更順。", "side": "E", "intensity": 1}, {"title": "先看每個人的說話方式", "desc": "摸清個性和反應，再提分工會比較準。", "side": "I", "intensity": 1}, {"title": "先自己消化全貌", "desc": "想清楚需求與結構後，再提出分工建議。", "side": "I", "intensity": 2}]}, {"id": 4, "axis": "EI", "emoji": "🎤", "bias": 1.24, "text": "你突然被 cue 上台補充說明，當下的反應通常是？", "options": [{"title": "先接話再調整", "desc": "先把場接住，內容可以一邊講一邊修。", "side": "E", "intensity": 2}, {"title": "先講大方向", "desc": "透過現場反應，即時抓觀眾聽得懂的版本。", "side": "E", "intensity": 1}, {"title": "先停兩秒排順序", "desc": "心裡有框架後，講起來才會比較穩。", "side": "I", "intensity": 1}, {"title": "想先要一點整理時間", "desc": "寧可慢半拍，也想把內容講得更完整。", "side": "I", "intensity": 2}]}, {"id": 5, "axis": "SN", "emoji": "🧭", "bias": 1.0, "text": "接到一個全新的任務，你第一步最常做什麼？", "options": [{"title": "先盤現況與限制", "desc": "時程、資源、交付條件先抓清楚，地板要先踩穩。", "side": "S", "intensity": 2}, {"title": "先找相似案例", "desc": "看看之前有人怎麼做，能少走一些冤枉路。", "side": "S", "intensity": 1}, {"title": "先畫可能方向", "desc": "不急著落細節，先把幾條路想出來。", "side": "N", "intensity": 1}, {"title": "先想它能長到哪裡", "desc": "腦中會先浮出更大的畫面，而不是眼前這版而已。", "side": "N", "intensity": 2}]}, {"id": 6, "axis": "SN", "emoji": "☁️", "bias": 1.08, "text": "主管只丟一句『想再高級一點』，你多半怎麼解讀？", "options": [{"title": "先追問成功條件", "desc": "要先知道什麼叫『高級』，不然很容易白忙。", "side": "S", "intensity": 2}, {"title": "先列目前已知線索", "desc": "把可確認的條件整理出來，再往下拆。", "side": "S", "intensity": 1}, {"title": "先翻譯成氣質方向", "desc": "抓抽象感受，把它變成幾種可提案的語氣。", "side": "N", "intensity": 1}, {"title": "先開腦內版本庫", "desc": "會直接想到幾個完全不同的高級路線可以試。", "side": "N", "intensity": 2}]}, {"id": 7, "axis": "SN", "emoji": "🧪", "bias": 1.16, "text": "你在看競品或參考案例時，最先吸到的是哪一層？", "options": [{"title": "實作細節", "desc": "會先記版位、節奏、格式、文案結構這些能落地的東西。", "side": "S", "intensity": 2}, {"title": "可複製做法", "desc": "先抓哪些操作能移植，哪些方法值得學。", "side": "S", "intensity": 1}, {"title": "背後策略", "desc": "比較在意他為什麼這樣切，而不是只看表面。", "side": "N", "intensity": 1}, {"title": "空白機會", "desc": "會想：如果反著做，或往旁邊走，會不會更有新意？", "side": "N", "intensity": 2}]}, {"id": 8, "axis": "SN", "emoji": "🧩", "bias": 1.24, "text": "在簡報送出去前，你最後最容易檢查的是？", "options": [{"title": "數字與邏輯閉環", "desc": "頁面漂亮之前，論點要先站得住腳。", "side": "S", "intensity": 2}, {"title": "銜接與執行性", "desc": "看前後頁有沒有斷裂，實際執行會不會卡。", "side": "S", "intensity": 1}, {"title": "主敘事夠不夠高", "desc": "會再看一次整體概念，有沒有再拉上一層的空間。", "side": "N", "intensity": 1}, {"title": "記憶點夠不夠強", "desc": "你很在意它最後留在別人腦中的畫面是什麼。", "side": "N", "intensity": 2}]}, {"id": 9, "axis": "TF", "emoji": "🫱", "bias": 1.0, "text": "同事提案被打槍、整個人明顯垮掉時，你通常先做什麼？", "options": [{"title": "先救方案", "desc": "把能改的地方列出來，讓局勢先重新可控。", "side": "T", "intensity": 2}, {"title": "先指出關鍵問題", "desc": "讓他知道不是全盤不行，只是卡在幾個點。", "side": "T", "intensity": 1}, {"title": "先接住情緒", "desc": "至少先讓他知道，這不是他一個人扛。", "side": "F", "intensity": 1}, {"title": "先陪他緩一下", "desc": "人穩了，後面的修改才有辦法真的推下去。", "side": "F", "intensity": 2}]}, {"id": 10, "axis": "TF", "emoji": "🗣️", "bias": 1.08, "text": "你要給同事一個不太好聽的回饋時，通常更像哪種？", "options": [{"title": "直接講問題", "desc": "省掉繞路，大家才能更快進到修正。", "side": "T", "intensity": 2}, {"title": "先講結論再補理由", "desc": "你會盡量俐落，但還是把依據講清楚。", "side": "T", "intensity": 1}, {"title": "先修一下語氣", "desc": "不是不講重點，只是希望對方比較能消化。", "side": "F", "intensity": 1}, {"title": "先顧接收感受", "desc": "你在意的不只是內容對不對，還有對方怎麼接住它。", "side": "F", "intensity": 2}]}, {"id": 11, "axis": "TF", "emoji": "✂️", "bias": 1.16, "text": "預算或時間突然被砍半，只能留一部分時，你會先守住什麼？", "options": [{"title": "效益最高的部分", "desc": "先留 ROI 最清楚、最能交代成果的那塊。", "side": "T", "intensity": 2}, {"title": "最有必要的骨架", "desc": "把重複或低效的先砍掉，核心流程要活下來。", "side": "T", "intensity": 1}, {"title": "最不傷合作感的部分", "desc": "你會在意這刀下去，團隊或合作對象會不會很難受。", "side": "F", "intensity": 1}, {"title": "對長期關係最重要的部分", "desc": "短期結果可以少一點，但不想把信任一次砍掉。", "side": "F", "intensity": 2}]}, {"id": 12, "axis": "TF", "emoji": "🧯", "bias": 1.24, "text": "客戶臨時要加東西，但團隊已經很累了，你第一個念頭是？", "options": [{"title": "先談範圍與代價", "desc": "不是不能做，但新增就該有新增的對價。", "side": "T", "intensity": 2}, {"title": "先重排優先順序", "desc": "看怎麼調動資源，讓新增不至於整包炸掉。", "side": "T", "intensity": 1}, {"title": "先看誰快撐不住", "desc": "你不想事情做完了，人也一起被耗空。", "side": "F", "intensity": 1}, {"title": "先找大家都能接受的版本", "desc": "希望事情能過，關係和士氣也不要一起掉。", "side": "F", "intensity": 2}]}, {"id": 13, "axis": "JP", "emoji": "📆", "bias": 1.0, "text": "離截止日還有一週時，你的狀態最接近哪一種？", "options": [{"title": "照表推進中", "desc": "時程大致早就排好，現在是在執行不是在賭運氣。", "side": "J", "intensity": 2}, {"title": "核心都定好了", "desc": "主體完成，剩下是整理與微調。", "side": "J", "intensity": 1}, {"title": "邊做邊調版本", "desc": "你習慣在接近完成時，把內容修到最順。", "side": "P", "intensity": 1}, {"title": "最後衝刺才會開滿", "desc": "壓線反而讓你集中，靈魂常在最後幾天上線。", "side": "P", "intensity": 2}]}, {"id": 14, "axis": "JP", "emoji": "🗂️", "bias": 1.08, "text": "你的桌面、檔案與待辦清單，最像下面哪種畫風？", "options": [{"title": "分類有規則", "desc": "命名、資料夾層級、待辦排序都很清楚。", "side": "J", "intensity": 2}, {"title": "基本有秩序", "desc": "不一定完美，但至少你現在要找什麼都找得到。", "side": "J", "intensity": 1}, {"title": "外人看像亂流", "desc": "但你自己知道東西在哪，腦中有一套地圖。", "side": "P", "intensity": 1}, {"title": "混亂宇宙自有法則", "desc": "別人幫你整理反而更危險，因為你會瞬間失憶。", "side": "P", "intensity": 2}]}, {"id": 15, "axis": "JP", "emoji": "🔄", "bias": 1.16, "text": "專案做到一半突然改需求時，你通常怎麼接？", "options": [{"title": "先重排時程與責任", "desc": "讓新需求有位置，整體節奏才不會失控。", "side": "J", "intensity": 2}, {"title": "先定新版框架", "desc": "把主軸重新拉直後，再繼續往下做。", "side": "J", "intensity": 1}, {"title": "直接沿著新局面修", "desc": "邊做邊調對你來說很自然，不用先全定好。", "side": "P", "intensity": 1}, {"title": "越變動越有感", "desc": "你很會在現場找路，改來改去不一定會把你嚇到。", "side": "P", "intensity": 2}]}, {"id": 16, "axis": "JP", "emoji": "⏳", "bias": 1.24, "text": "你安排一天工作的方式，通常比較像哪一種？", "options": [{"title": "切好時段再開始", "desc": "連緩衝時間都會先留好，這樣做起來比較安心。", "side": "J", "intensity": 2}, {"title": "先排最重要三件事", "desc": "大方向先定，其餘依進度微調即可。", "side": "J", "intensity": 1}, {"title": "先抓大方向留空白", "desc": "你喜歡保留空間，因為臨時任務和靈感都會插隊。", "side": "P", "intensity": 1}, {"title": "看當天狀態決定先後", "desc": "你會先做最有手感或最需要臨場感的那個。", "side": "P", "intensity": 2}]}];
+    const RESULTS = {"INTJ": {"name": "深山雲霧", "emoji": "🏔️", "tagline": "安靜不是退場，是你在高處佈局", "color": "#4A6FA5", "bg": "#EEF3FA", "traits": ["策略型思考", "長線佈局", "獨立判斷"], "desc": "你像高山裡的雲霧，不一定最吵，但方向感很強。你擅長看全局、提早預判，也常把混亂的事重新整理成更有秩序的版本。你不是想掌控全部，只是很難接受明明能更好卻還在原地打轉。"}, "INTP": {"name": "星空沙漠", "emoji": "🌌", "tagline": "你不是分心，是腦內同時跑很多條厲害的線", "color": "#2D3561", "bg": "#ECEEF8", "traits": ["抽象分析", "知識連結", "創意拆解"], "desc": "你像星空下的沙漠，表面安靜，腦中卻很熱鬧。你擅長拆解問題、提出另一種看法，也常在別人沒想到的地方挖出新解法。你最厲害的，不是照著走，而是讓人發現原來還有這種走法。"}, "ENTJ": {"name": "城市天際線", "emoji": "🌃", "tagline": "局面越大，你越像真的上線", "color": "#1A1A2E", "bg": "#EBEBF5", "traits": ["決策推進", "領導統整", "高效執行"], "desc": "你像俐落發亮的天際線，清楚、強勢、帶推進力。你很會整理混亂，也很會把人和資源拉到同一條線上。別人還在猶豫時，你多半已經在想怎麼把結果做出來。"}, "ENTP": {"name": "活火山", "emoji": "🌋", "tagline": "你的點子不是多，是多到會溢出", "color": "#8B2500", "bg": "#FAEEE8", "traits": ["高能發想", "辯證能力", "打破框架"], "desc": "你像活火山，反應快、點子多，很會把無聊會議炸出新火花。你不太喜歡被舊規則綁住，也很擅長用不同切法讓事情重新有戲。你最大的本事，是把卡住的局突然扳出另一條路。"}, "INFJ": {"name": "極光夜空", "emoji": "🌠", "tagline": "你看的不只任務，還有人心與意義", "color": "#4B0082", "bg": "#F0ECF8", "traits": ["深度洞察", "共感理解", "理想驅動"], "desc": "你像極光夜空，表面平靜，但很會察覺空氣裡那些沒被說出口的訊號。你做事時常一邊推進，一邊也在想：這件事對人、對團隊、對方向，到底值不值得。"}, "INFP": {"name": "秘境瀑布", "emoji": "🍃", "tagline": "溫柔不等於弱，很多靈感都長在你這種人身上", "color": "#2E6B8A", "bg": "#EAF4F8", "traits": ["價值感強", "創意表達", "細膩真誠"], "desc": "你像森林深處的瀑布，不一定搶前排，但觀點很真、很有自己的濃度。你在意自己做的事是否和價值一致，也常把感受轉成有感染力的內容。你不是慢熱，只是對真實特別有要求。"}, "ENFJ": {"name": "向日葵田", "emoji": "🌻", "tagline": "你很會把人照亮，也順便把局帶起來", "color": "#8B6914", "bg": "#FDF8E8", "traits": ["團隊感召", "溝通協調", "溫暖領導"], "desc": "你像一整片向日葵田，很會接住人，也很會推動事情往前。你能看見別人的亮點，知道什麼時候該鼓勵、什麼時候該整隊。跟你合作，常會有種雖然事情很多但莫名願意一起撐的感覺。"}, "ENFP": {"name": "彩虹雨後", "emoji": "🌈", "tagline": "你是那種能把內容做出靈魂的人", "color": "#C4500A", "bg": "#FDF3EC", "traits": ["靈感豐富", "感染力強", "人味連結"], "desc": "你像雨後彩虹，腦袋活、感受力也強，常把一件普通任務做得更有亮點。你很懂人，也懂怎麼讓內容有溫度。你最強的不只是完成，而是讓事情完成後真的有人記得。"}, "ISTJ": {"name": "橡木老林", "emoji": "🌲", "tagline": "你不是古板，是讓世界不要炸掉的那群人", "color": "#2D5016", "bg": "#EFF5E8", "traits": ["穩定可靠", "細節管理", "承諾感強"], "desc": "你像一片老林，安靜但很穩。你重視規則、細節與責任感，事情交給你通常就是讓人放心。你不太愛浮誇，但你的存在本身就很有份量，像地基一樣，平常不搶鏡，卻不能沒有你。"}, "ISFJ": {"name": "靜謐湖泊", "emoji": "🏞️", "tagline": "你的穩，是很多人日常裡的安全感來源", "color": "#1A5276", "bg": "#EAF2F8", "traits": ["細膩照顧", "穩定支援", "高配合度"], "desc": "你像一座靜湖，溫柔、穩定，又很會照顧細節。你經常默默補位，讓合作變順，也讓身邊的人不至於太慌。你的強不是大聲，而是你總能在別人需要時剛好出現在對的位置。"}, "ESTJ": {"name": "繁忙港口", "emoji": "⚓", "tagline": "你很知道怎樣把事送上岸，而且準時", "color": "#34495E", "bg": "#EBF0F4", "traits": ["組織管理", "果斷執行", "高標準"], "desc": "你像高效運轉的港口，節奏清楚、動作俐落、資源安排得明明白白。你擅長制定規則與流程，讓專案不要陷入無效消耗。別人可能覺得你要求高，但老實說，有你在事情真的比較會成。"}, "ESFJ": {"name": "花園小鎮", "emoji": "🌺", "tagline": "你讓一群人不只是工作，而是真的一起做事", "color": "#7D3C98", "bg": "#F5EBF8", "traits": ["社群凝聚", "氛圍維護", "同理協作"], "desc": "你像一座花園小鎮，有人味、有溫度，也很會把關係照顧好。你擅長感受團隊氣氛，知道怎樣讓合作不只是完成工作，而是真的形成互相支持的節奏。"}, "ISTP": {"name": "荒野峽谷", "emoji": "🏜️", "tagline": "話不多，但一到出事現場你就會變 MVP", "color": "#784212", "bg": "#F5EDE0", "traits": ["冷靜排錯", "實作導向", "臨場解決"], "desc": "你像荒野峽谷，低調、耐打、很有自己的判斷。你喜歡用實際驗證取代空談，遇到狀況時通常能快速找到問題點。你不特別愛表現，但真的出包時，大家很容易第一個想到你。"}, "ISFP": {"name": "海岸日落", "emoji": "🌅", "tagline": "你不是在摸魚，是在守住做事的手感與溫度", "color": "#C0392B", "bg": "#FAECEA", "traits": ["美感直覺", "真實感受", "柔韌應對"], "desc": "你像海岸日落，有自己的節奏與美感標準。你對細節、氛圍、呈現方式很敏銳，也很在意作品是不是有靈魂。你不一定想站在中心，但你做出來的東西往往很有個人質感。"}, "ESTP": {"name": "急湍激流", "emoji": "🌊", "tagline": "現場越亂，你越像終於找到主場", "color": "#0E6655", "bg": "#E8F8F5", "traits": ["快速反應", "高壓應變", "行動力強"], "desc": "你像一股急流，速度快、判斷快、出手也快。你很適合需要臨場決策、快速協調的情境，越是現場變動，你反而越能抓到節奏。你不太喜歡空轉，因為你本來就是那種先動再解的人。"}, "ESFP": {"name": "熱帶海灘", "emoji": "🏖️", "tagline": "有你在的地方，會比較有生命力也比較有笑聲", "color": "#0A74A4", "bg": "#E8F5FC", "traits": ["感染力強", "互動自然", "現場感十足"], "desc": "你像熱帶海灘，明亮、自在，很會把人帶進舒服又有活力的互動節奏。你擅長把壓力感拆掉，讓合作過程不至於太僵。你不是只會活絡氣氛，你其實也很懂怎樣讓人更願意一起往前。"}};
+    const STRENGTH_COPY = {
+      light: '這一軸的彈性很高，你會看情境切換，不太容易被單一模式綁死。',
+      medium: '這是你常用的做事方向，但你仍保有一定的調整空間。',
+      strong: '這是你很穩定會出現的第一反應，很多時候會自然往這一側走。',
+      veryStrong: '這幾乎是你的本能出手方式，在壓力或高密度情境下會更明顯。'
     };
 
     const state = {
       screen: 'intro',
       index: 0,
       answers: [],
+      shuffledQuestions: [],
       selected: null,
       copied: false,
     };
 
     const root = document.getElementById('root');
 
-    function mergeScores(list) {
-      const scores = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
-      list.forEach(item => {
-        Object.entries(item).forEach(([key, val]) => { scores[key] += val; });
+    function shuffleArray(list) {
+      const arr = [...list];
+      for (let i = arr.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function prepareQuestions() {
+      return QUESTIONS.map(q => ({ ...q, options: shuffleArray(q.options) }));
+    }
+
+    function currentQuestion() {
+      return state.shuffledQuestions[state.index];
+    }
+
+    function resolveAxisDecision(axis, records) {
+      const [leftKey, rightKey] = AXIS_PAIR[axis];
+      let leftRaw = 0;
+      let rightRaw = 0;
+      let leftWeighted = 0;
+      let rightWeighted = 0;
+      let leftStrong = 0;
+      let rightStrong = 0;
+      let leftCount = 0;
+      let rightCount = 0;
+      let lastDominantSide = null;
+
+      records.forEach(entry => {
+        if (!entry || entry.axis !== axis) return;
+        const value = entry.intensity * entry.bias;
+        if (entry.side === leftKey) {
+          leftRaw += entry.intensity;
+          leftWeighted += value;
+          leftCount += 1;
+          if (entry.intensity === 2) leftStrong += 1;
+          lastDominantSide = leftKey;
+        } else {
+          rightRaw += entry.intensity;
+          rightWeighted += value;
+          rightCount += 1;
+          if (entry.intensity === 2) rightStrong += 1;
+          lastDominantSide = rightKey;
+        }
       });
-      const type =
-        (scores.E >= scores.I ? 'E' : 'I') +
-        (scores.S >= scores.N ? 'S' : 'N') +
-        (scores.T >= scores.F ? 'T' : 'F') +
-        (scores.J >= scores.P ? 'J' : 'P');
-      return { scores, type };
-    }
 
-    function barPercent(a, b) {
-      const total = a + b || 1;
-      return Math.round((a / total) * 100);
-    }
+      const weightedGap = leftWeighted - rightWeighted;
+      let winner = null;
 
-    function axisDetail(axis, scores) {
-      const pair = {
-        EI: ['E', 'I'],
-        SN: ['S', 'N'],
-        TF: ['T', 'F'],
-        JP: ['J', 'P'],
-      }[axis];
-      const [leftKey, rightKey] = pair;
-      const left = scores[leftKey];
-      const right = scores[rightKey];
+      if (weightedGap > 0) winner = leftKey;
+      else if (weightedGap < 0) winner = rightKey;
+      else if (leftStrong !== rightStrong) winner = leftStrong > rightStrong ? leftKey : rightKey;
+      else if (leftCount !== rightCount) winner = leftCount > rightCount ? leftKey : rightKey;
+      else if (leftRaw !== rightRaw) winner = leftRaw > rightRaw ? leftKey : rightKey;
+      else winner = lastDominantSide || leftKey;
+
+      const dominantWeighted = winner === leftKey ? leftWeighted : rightWeighted;
+      const totalWeighted = leftWeighted + rightWeighted || 1;
+      const gapRatio = Math.abs(leftWeighted - rightWeighted) / totalWeighted;
+      const strengthKey = gapRatio < 0.12 ? 'light' : gapRatio < 0.24 ? 'medium' : gapRatio < 0.38 ? 'strong' : 'veryStrong';
+      const strengthLabel = { light:'微偏', medium:'中偏', strong:'明顯', veryStrong:'很明顯' }[strengthKey];
       const meta = AXIS_META[axis];
-      const dominantLeft = left >= right;
-      const leftPercent = barPercent(left, right);
+      const leftPercent = Math.max(12, Math.round((leftWeighted / totalWeighted) * 100));
+      const rightPercent = Math.max(12, 100 - leftPercent);
+      const normalizedLeft = winner === rightKey && leftPercent > 88 ? 88 : leftPercent;
+      const normalizedRight = 100 - normalizedLeft;
+      const dominantLabel = winner === leftKey ? meta.left : meta.right;
+      const baseCopy = winner === leftKey ? meta.leftDesc : meta.rightDesc;
+
       return {
+        axis,
+        winner,
+        typeLetter: winner,
         title: AXIS_LABEL[axis],
-        leftKey, rightKey,
+        leftKey,
+        rightKey,
         leftLabel: meta.left,
         rightLabel: meta.right,
-        left, right,
-        dominant: dominantLeft ? meta.left : meta.right,
-        copy: dominantLeft ? meta.leftDesc : meta.rightDesc,
-        leftPercent,
-        rightPercent: 100 - leftPercent,
+        leftRaw,
+        rightRaw,
+        dominantLabel,
+        strengthLabel,
+        strengthKey,
+        summary: `傾向：${dominantLabel} ｜ 強度：${strengthLabel}`,
+        copy: `${baseCopy} ${STRENGTH_COPY[strengthKey]}`,
         color: AXIS_COLORS[axis],
+        leftWidth: normalizedLeft,
+        rightWidth: normalizedRight,
       };
+    }
+
+    function summarizeResults() {
+      const dimensions = ['EI','SN','TF','JP'].map(axis => resolveAxisDecision(axis, state.answers));
+      const type = dimensions.map(item => item.typeLetter).join('');
+      return { type, dimensions, result: RESULTS[type] };
     }
 
     function startQuiz() {
       state.screen = 'quiz';
       state.index = 0;
       state.answers = [];
+      state.shuffledQuestions = prepareQuestions();
       state.selected = null;
       state.copied = false;
       render();
@@ -646,15 +571,18 @@
 
     function nextQuestion() {
       if (state.selected === null) return;
-      const question = QUESTIONS[state.index];
+      const question = currentQuestion();
       const picked = question.options[state.selected];
-      state.answers.push(picked.scores);
+      state.answers[state.index] = {
+        questionId: question.id,
+        axis: question.axis,
+        side: picked.side,
+        intensity: picked.intensity,
+        bias: question.bias,
+      };
       state.selected = null;
-      if (state.index === QUESTIONS.length - 1) {
-        state.screen = 'result';
-      } else {
-        state.index += 1;
-      }
+      if (state.index === state.shuffledQuestions.length - 1) state.screen = 'result';
+      else state.index += 1;
       render();
     }
 
@@ -662,15 +590,17 @@
       state.screen = 'intro';
       state.index = 0;
       state.answers = [];
+      state.shuffledQuestions = [];
       state.selected = null;
       state.copied = false;
       render();
     }
 
     async function copyResult() {
-      const summary = mergeScores(state.answers);
-      const result = RESULTS[summary.type];
-      const text = `我的結果是 ${summary.type}｜${result.name} ${result.emoji}\n${result.tagline}\n${result.desc}`;
+      const summary = summarizeResults();
+      const text = `我的結果是 ${summary.type}｜${summary.result.name} ${summary.result.emoji}
+${summary.result.tagline}
+${summary.result.desc}`;
       try {
         await navigator.clipboard.writeText(text);
         state.copied = true;
@@ -685,10 +615,10 @@
     function introView() {
       return `
         <div class="panel intro-panel fade-up">
-          <div class="hero-orb">💼</div>
+          <div class="hero-orb">🧭</div>
           <p class="eyebrow">INNER TYPE QUIZ</p>
           <h1 class="hero-title">你的 <br><em>人格地貌</em> 是什麼？</h1>
-          <p class="hero-desc">12 題、每題 4 個選項，從情境選擇慢慢看出你的做事節奏。<br>不是那種硬邦邦的人格測驗，比較像是把你的反應模式溫柔拆開來看。</p>
+          <p class="hero-desc">16 道情境題，從協作、回饋、臨場反應與做事節奏，慢慢看出你更接近哪一種人格輪廓。<br>不是背術語的那種測驗，比較像把你的反應模式拆開來看。</p>
           <div class="pill-grid">
             <span class="mini-pill" style="background:#EBF2FB;color:#4A7FB5">E / I 能量來源</span>
             <span class="mini-pill" style="background:#EBF5EC;color:#4A8B52">S / N 資訊接收</span>
@@ -701,43 +631,44 @@
     }
 
     function quizView() {
-      const q = QUESTIONS[state.index];
-      const progress = Math.round((state.index / QUESTIONS.length) * 100);
+      const q = currentQuestion();
+      const progress = Math.round((state.index / state.shuffledQuestions.length) * 100);
       return `
-        <div class="panel">
+        <div class="panel fade-up">
           <div class="progress-wrap">
             <div class="progress-bar">
               <div class="progress-fill" style="width:${progress}%;background:${AXIS_COLORS[q.axis]}"></div>
             </div>
             <div class="question-meta">
               <span class="axis-badge" style="background:${AXIS_BG[q.axis]};color:${AXIS_COLORS[q.axis]}">${AXIS_LABEL[q.axis]}</span>
-              <span class="count-text">${state.index + 1} / ${QUESTIONS.length}</span>
+              <span class="count-text">${state.index + 1} / ${state.shuffledQuestions.length}</span>
             </div>
           </div>
           <div class="question-head">
             <div class="question-emoji">${q.emoji}</div>
             <h2 class="question-title">${q.text}</h2>
-            
           </div>
           <div class="option-list">
             ${q.options.map((opt, i) => `
               <button type="button" class="option-card ${state.selected === i ? 'is-selected' : ''}" onclick="selectOption(${i})">
                 <span class="option-index">${['A','B','C','D'][i]}</span>
-                <span>${opt.label}</span>
+                <span class="option-copy">
+                  <strong class="option-title">${opt.title}</strong>
+                  <p class="option-desc">${opt.desc}</p>
+                </span>
               </button>
             `).join('')}
           </div>
           <button type="button" class="next-button ${state.selected !== null ? 'is-active' : ''}" onclick="nextQuestion()" ${state.selected === null ? 'disabled' : ''}>
-            ${state.index === QUESTIONS.length - 1 ? '查看結果' : '下一題'}
+            ${state.index === state.shuffledQuestions.length - 1 ? '查看結果' : '下一題'}
           </button>
         </div>
       `;
     }
 
     function resultView() {
-      const summary = mergeScores(state.answers);
-      const result = RESULTS[summary.type];
-      const dimensions = ['EI','SN','TF','JP'].map(axis => axisDetail(axis, summary.scores));
+      const summary = summarizeResults();
+      const result = summary.result;
       return `
         <div class="fade-up">
           <div class="result-hero" style="background:${result.bg}">
@@ -752,26 +683,30 @@
             <div class="trait-list">
               ${result.traits.map(item => `<span class="trait-pill" style="background:${result.color}18;color:${result.color}">${item}</span>`).join('')}
             </div>
-<section class="analysis-box">
+            <section class="analysis-box">
               <p class="analysis-title">四個維度分析</p>
-              ${dimensions.map(dim => `
+              <p class="analysis-subcopy">每一軸都會顯示你目前更靠近哪一側，以及這個傾向有多明顯。</p>
+              ${summary.dimensions.map(dim => `
                 <div class="dimension-block">
                   <div class="dimension-top">
                     <div>
                       <p class="dimension-title">${dim.title}</p>
-                      <p class="dimension-dominant">目前傾向：${dim.dominant}</p>
+                      <div class="dimension-meta">
+                        <span class="info-chip" style="background:${dim.color}16;color:${dim.color}">${dim.dominantLabel}</span>
+                        <span class="info-chip" style="background:#F4EFEA;color:#7b6e66">${dim.strengthLabel}</span>
+                      </div>
                     </div>
-                    <div class="dimension-score">${dim.leftKey} ${dim.left} · ${dim.rightKey} ${dim.right}</div>
+                    <div class="dimension-score">${dim.summary}</div>
                   </div>
                   <div class="dimension-row">
                     <span>${dim.leftLabel}</span>
                     <span>${dim.rightLabel}</span>
                   </div>
-                  <div class="dimension-track split-track" aria-hidden="true">
-                    <div class="dimension-segment left" style="flex-grow:${Math.max(dim.left, 0.01)};background:${dim.color}"></div>
-                    <div class="dimension-segment right" style="flex-grow:${Math.max(dim.right, 0.01)};background:${dim.color}"></div>
+                  <div class="dimension-track" aria-hidden="true">
+                    <div class="dimension-segment left" style="width:${dim.leftWidth}%;background:${dim.color}"></div>
+                    <div class="dimension-segment right" style="width:${dim.rightWidth}%;background:${dim.color}"></div>
                   </div>
-                  <div class="dimension-copy">${dim.copy}</div>
+                  <p class="dimension-copy">${dim.copy}</p>
                 </div>
               `).join('')}
             </section>
@@ -789,13 +724,11 @@
       if (state.screen === 'intro') inner = introView();
       if (state.screen === 'quiz') inner = quizView();
       if (state.screen === 'result') inner = resultView();
-
       root.innerHTML = `
         <main class="page-shell">
           <div class="ambient ambient-left"></div>
           <div class="ambient ambient-right"></div>
           <section class="quiz-card">${inner}</section>
-          
         </main>
       `;
     }
