@@ -1,0 +1,812 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="以情境題切入的 MBTI 心理測驗網站。" />
+  <title>你的人格地貌｜MBTI 心理測驗</title>
+  <style>
+    :root {
+      --bg: #f7f5f2;
+      --card: rgba(255,255,255,0.92);
+      --text: #1a1410;
+      --muted: #8c7d73;
+      --line: #ebe5df;
+      --blue: #6a90c4;
+      --green: #5ea87a;
+      --orange: #c4956a;
+      --purple: #9b72c0;
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(192,206,240,.36), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(233,204,185,.28), transparent 26%),
+        var(--bg);
+    }
+    button { font: inherit; }
+    .page-shell {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 28px 16px 52px;
+      position: relative;
+      overflow: hidden;
+    }
+    .ambient {
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 999px;
+      filter: blur(70px);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+    .ambient-left { top: -80px; left: -80px; background: #7aa4dc40; }
+    .ambient-right { right: -90px; bottom: -90px; background: #d4b49940; }
+    .quiz-card {
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      box-shadow: 0 24px 80px rgba(33, 23, 17, 0.12);
+      overflow: hidden;
+      z-index: 1;
+    }
+    .panel { padding: 42px 42px 38px; }
+    .fade-up { animation: fadeUp .4s ease both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .intro-panel { text-align: center; }
+    .hero-orb, .result-icon {
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+    }
+    .hero-orb {
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 24px;
+      font-size: 42px;
+      background: linear-gradient(145deg,#fff,#f2ede7);
+      box-shadow: inset 0 1px rgba(255,255,255,.9), 0 18px 40px rgba(74,127,181,.12);
+      animation: floaty 3.2s ease-in-out infinite;
+    }
+    @keyframes floaty {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .eyebrow, .result-type, .analysis-title {
+      margin: 0;
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #b7a79a;
+      font-weight: 700;
+    }
+    .hero-title, .question-title, .result-name, .result-label {
+      font-family: "DM Serif Display", Georgia, serif;
+    }
+    .hero-title {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+    .hero-title em { color: var(--blue); font-style: italic; }
+    .hero-desc, .result-description, .dimension-copy, .tip-copy {
+      color: #6f6258;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+    .hero-desc { margin: 18px 0 0; }
+    .pill-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 28px 0 34px;
+    }
+    .mini-pill, .trait-pill, .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .mini-pill, .meta-pill {
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .meta-pill { gap: 8px; }
+    .primary-button, .ghost-button, .next-button {
+      border: 0;
+      border-radius: 999px;
+      padding: 16px 22px;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
+      font-weight: 700;
+    }
+    .primary-button {
+      width: 100%;
+      background: #1a1410;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .primary-button:hover {
+      transform: translateY(-2px);
+      background: var(--blue);
+      box-shadow: 0 14px 28px rgba(74,127,181,.26);
+    }
+    .primary-button.compact, .ghost-button { width: auto; }
+    .ghost-button {
+      background: transparent;
+      border: 1.5px solid #1a1410;
+      color: #1a1410;
+    }
+    .ghost-button:hover {
+      background: #1a1410;
+      color: #fff;
+    }
+    .progress-wrap { margin-bottom: 28px; }
+    .progress-bar {
+      width: 100%;
+      height: 7px;
+      background: #eee7df;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width .25s ease;
+    }
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 18px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .axis-badge {
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .count-text, .result-tagline { color: #a59589; font-size: 13px; }
+    .question-head { margin-bottom: 24px; }
+    .question-emoji { font-size: 32px; margin-bottom: 8px; }
+    .question-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.35;
+    }
+    .tip-copy { font-size: 13px; margin: 10px 0 0; color: #9a8d83; }
+    .option-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .option-card {
+      width: 100%;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      border: 1.5px solid var(--line);
+      background: #faf9f7;
+      border-radius: 18px;
+      padding: 18px 18px;
+      text-align: left;
+      color: #3d332c;
+      line-height: 1.6;
+      min-height: 110px;
+    }
+    .option-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--blue);
+      background: #f0f5fb;
+    }
+    .option-card.is-selected {
+      border-color: var(--blue);
+      background: #ebf2fb;
+      color: #1a3a5c;
+      box-shadow: 0 10px 24px rgba(74,127,181,.14);
+    }
+    .option-index {
+      color: #baa99c;
+      font-size: 12px;
+      font-weight: 700;
+      min-width: 18px;
+      padding-top: 2px;
+    }
+    .next-button {
+      width: 100%;
+      margin-top: 24px;
+      background: #ede8e2;
+      color: #b7a79a;
+    }
+    .next-button.is-active {
+      background: #1a1410;
+      color: #fff;
+    }
+    .next-button.is-active:hover {
+      transform: translateY(-2px);
+      background: var(--blue);
+    }
+    .next-button:disabled { cursor: not-allowed; }
+    .result-hero {
+      text-align: center;
+      padding: 40px 42px 28px;
+    }
+    .result-icon {
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 18px;
+      font-size: 44px;
+    }
+    .result-label {
+      margin: 8px 0 2px;
+      font-size: 18px;
+      color: #7d6f65;
+    }
+    .result-name {
+      margin: 0;
+      font-size: 42px;
+      line-height: 1.08;
+    }
+    .result-tagline { margin: 10px 0 0; font-style: italic; }
+    .result-body { padding: 30px 42px 42px; }
+    .trait-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .trait-pill {
+      padding: 7px 14px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .analysis-box {
+      background: #faf9f7;
+      border-radius: 22px;
+      padding: 22px 20px 8px;
+      margin-bottom: 18px;
+    }
+    .dimension-block {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      padding: 16px 16px 14px;
+      margin-bottom: 14px;
+    }
+    .dimension-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .dimension-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      color: #3d332c;
+    }
+    .dimension-dominant {
+      margin: 4px 0 0;
+      font-size: 12px;
+      color: #8b7d72;
+      font-weight: 700;
+    }
+    .dimension-score {
+      font-size: 12px;
+      color: #8b7d72;
+      white-space: nowrap;
+      font-weight: 700;
+    }
+    .dimension-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #7b6e66;
+      margin-bottom: 6px;
+    }
+    .dimension-track {
+      height: 8px;
+      background: #eee7df;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .split-track {
+      display: flex;
+    }
+    .dimension-segment {
+      height: 100%;
+      transition: flex-grow .45s ease;
+    }
+    .dimension-segment.left {
+      border-radius: 999px 0 0 999px;
+      opacity: .95;
+    }
+    .dimension-segment.right {
+      border-radius: 0 999px 999px 0;
+      opacity: .55;
+    }
+    .dimension-fill {
+      height: 100%;
+      border-radius: inherit;
+      transition: width .45s ease;
+    }
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .site-footer {
+      position: absolute;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #9d9087;
+      font-size: 12px;
+      text-align: center;
+      z-index: 1;
+    }
+    @media (max-width: 640px) {
+      .page-shell { padding: 16px 12px 44px; }
+      .panel, .result-hero, .result-body { padding-left: 22px; padding-right: 22px; }
+      .panel { padding-top: 28px; padding-bottom: 28px; }
+      .hero-title { font-size: 34px; }
+      .question-title, .result-name { font-size: 28px; }
+      .hero-desc, .result-description, .dimension-copy, .option-card { font-size: 14px; }
+      .result-label { font-size: 16px; }
+      .option-list { grid-template-columns: 1fr; }
+      .action-row > * { width: 100%; }
+      .primary-button.compact, .ghost-button { width: 100%; }
+      .dimension-top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    const AXIS_COLORS = { EI: '#6A90C4', SN: '#5EA87A', TF: '#C4956A', JP: '#9B72C0' };
+    const AXIS_BG = { EI: '#EBF2FB', SN: '#EBF5EC', TF: '#FDF3E9', JP: '#F3EBF8' };
+    const AXIS_LABEL = { EI: '能量來源', SN: '資訊接收', TF: '決策方式', JP: '工作節奏' };
+
+    const AXIS_META = {
+      EI: {
+        left: '外向 E', right: '內向 I',
+        leftDesc: '你在職場偏向先互動、先開聊，會從交流中把局面推進。',
+        rightDesc: '你在職場偏向先整理、先思考，會在穩定內化後再出手。'
+      },
+      SN: {
+        left: '實感 S', right: '直覺 N',
+        leftDesc: '你比較信任具體資訊、既有經驗與可落地的執行線索。',
+        rightDesc: '你比較容易先看到可能性、概念連結與更遠的方向感。'
+      },
+      TF: {
+        left: '思考 T', right: '情感 F',
+        leftDesc: '你決策時重視邏輯、效率與標準，會先問怎樣最合理。',
+        rightDesc: '你決策時重視感受、氛圍與關係，會先問這樣對人好不好。'
+      },
+      JP: {
+        left: '判斷 J', right: '感知 P',
+        leftDesc: '你工作時喜歡先定節點與進度，掌控感會讓你更穩。',
+        rightDesc: '你工作時喜歡保留彈性與臨場應變，空間感會讓你更活。'
+      }
+    };
+
+    const QUESTIONS = [
+      {
+        id: 1, axis: 'EI', emoji: '🧑‍💼',
+        text: '剛進一場跨部門會議，大家還有點冷，你通常會怎麼開局？',
+        options: [
+          { label: '直接開口暖場，把人拉進討論節奏', scores: { E: 2 } },
+          { label: '先接別人的話，順勢把交流帶起來', scores: { E: 1 } },
+          { label: '先聽一下每個人的方向，再挑時機發言', scores: { I: 1 } },
+          { label: '先做自己的觀察筆記，等資訊齊了再說', scores: { I: 2 } },
+        ]
+      },
+      {
+        id: 2, axis: 'EI', emoji: '🔋',
+        text: '連開好幾場會後，你最需要哪種方式回血？',
+        options: [
+          { label: '去找同事聊天吐槽一下，順便再吸一點人類能量', scores: { E: 2 } },
+          { label: '走去茶水間晃一圈，邊聊邊放空', scores: { E: 1 } },
+          { label: '戴上耳機自己整理一下思緒，再回戰場', scores: { I: 1 } },
+          { label: '短暫消失一下，安靜獨處才是真續命', scores: { I: 2 } },
+        ]
+      },
+      {
+        id: 3, axis: 'EI', emoji: '🤝',
+        text: '你更常被同事怎麼形容？',
+        options: [
+          { label: '像推進器，會主動把人跟事都串起來', scores: { E: 2 } },
+          { label: '蠻好聊的，合作起來很有現場感', scores: { E: 1 } },
+          { label: '很穩，講話不多但每次都講重點', scores: { I: 1 } },
+          { label: '像隱藏王牌，通常安靜但一出手就很準', scores: { I: 2 } },
+        ]
+      },
+      {
+        id: 4, axis: 'SN', emoji: '📊',
+        text: '接到一個新專案時，你會先抓哪種資訊？',
+        options: [
+          { label: '先盤現況、限制、時程、資源，地板先踩穩', scores: { S: 2 } },
+          { label: '先看過往案例，找得到可套用的操作邏輯', scores: { S: 1 } },
+          { label: '先想這件事有沒有更有意思的切法', scores: { N: 1 } },
+          { label: '先看它背後的機會點，想像可以長成什麼樣', scores: { N: 2 } },
+        ]
+      },
+      {
+        id: 5, axis: 'SN', emoji: '🧠',
+        text: '老闆丟一句很抽象的需求給你，你第一反應比較像？',
+        options: [
+          { label: '先追問清楚具體交付內容與成功條件', scores: { S: 2 } },
+          { label: '先拆出目前已知條件，邊做邊補細節', scores: { S: 1 } },
+          { label: '先抓大方向，模糊也沒關係，腦中先組版圖', scores: { N: 1 } },
+          { label: '先聯想多個可能版本，腦內先開平行宇宙', scores: { N: 2 } },
+        ]
+      },
+      {
+        id: 6, axis: 'SN', emoji: '🔍',
+        text: '在簡報或企劃裡，你最容易先看到哪一層？',
+        options: [
+          { label: '數字、證據、流程有沒有站得住腳', scores: { S: 2 } },
+          { label: '內容結構夠不夠清楚，執行上有沒有破口', scores: { S: 1 } },
+          { label: '概念有沒有亮點，能不能再往上拉一層', scores: { N: 1 } },
+          { label: '整體敘事與象徵感，有沒有長出記憶點', scores: { N: 2 } },
+        ]
+      },
+      {
+        id: 7, axis: 'TF', emoji: '⚖️',
+        text: '同事提案被打槍，情緒明顯掉下去，你通常會？',
+        options: [
+          { label: '先幫他拆問題，直接指出下一版怎麼救', scores: { T: 2 } },
+          { label: '陪他看哪裡可調，重點是把局勢拉回可控', scores: { T: 1 } },
+          { label: '先接住情緒，讓他知道這不是他一個人的鍋', scores: { F: 1 } },
+          { label: '先安撫再談方法，人穩了事情才會穩', scores: { F: 2 } },
+        ]
+      },
+      {
+        id: 8, axis: 'TF', emoji: '🧩',
+        text: '做決策時，哪種理由最能說服你？',
+        options: [
+          { label: '數據、邏輯、風險評估完整，這樣我買單', scores: { T: 2 } },
+          { label: '至少要合理、能解釋、能執行', scores: { T: 1 } },
+          { label: '這做法比較顧到合作感與團隊狀態', scores: { F: 1 } },
+          { label: '這件事雖不完美，但對人更有溫度與長期價值', scores: { F: 2 } },
+        ]
+      },
+      {
+        id: 9, axis: 'TF', emoji: '📣',
+        text: '當你要給別人回饋時，通常更接近哪一種風格？',
+        options: [
+          { label: '直接講重點，不繞路最有效率', scores: { T: 2 } },
+          { label: '先講結論，再補充理由與建議', scores: { T: 1 } },
+          { label: '會修飾語氣，盡量讓對方好吸收', scores: { F: 1 } },
+          { label: '很在意對方接收感受，會顧內容也顧情緒', scores: { F: 2 } },
+        ]
+      },
+      {
+        id: 10, axis: 'JP', emoji: '📅',
+        text: '面對截止日前一週，你的狀態比較像？',
+        options: [
+          { label: '進度表早排好了，現在只是照表推進', scores: { J: 2 } },
+          { label: '主要框架都已經定好，剩下是微調', scores: { J: 1 } },
+          { label: '大方向有，但我會邊做邊調最順的版本', scores: { P: 1 } },
+          { label: '壓線反而比較有靈感，靈魂都在最後衝刺時上線', scores: { P: 2 } },
+        ]
+      },
+      {
+        id: 11, axis: 'JP', emoji: '🗂️',
+        text: '你桌面、檔案、代辦清單的真實樣貌更像哪種？',
+        options: [
+          { label: '分類清楚，命名有規則，找資料像開外掛', scores: { J: 2 } },
+          { label: '大致有秩序，至少我自己找得到', scores: { J: 1 } },
+          { label: '有點自由流動，但我腦內有我自己的地圖', scores: { P: 1 } },
+          { label: '混亂中自有宇宙，別碰就還能活', scores: { P: 2 } },
+        ]
+      },
+      {
+        id: 12, axis: 'JP', emoji: '🚨',
+        text: '專案半路突然改需求，你多半會？',
+        options: [
+          { label: '先重新排優先順序與時程，讓一切回到軌道', scores: { J: 2 } },
+          { label: '雖然煩，但先重整架構，再繼續推', scores: { J: 1 } },
+          { label: '我可以順著新局面改，彈性本來就是工作的一部分', scores: { P: 1 } },
+          { label: '變動就變動，現場抓節奏我反而更來勁', scores: { P: 2 } },
+        ]
+      },
+    ];
+
+    const RESULTS = {
+      INTJ:{name:'深山雲霧',emoji:'🏔️',tagline:'安靜不是退場，是你在高處佈局',color:'#4A6FA5',bg:'#EEF3FA',traits:['策略型思考','長線佈局','獨立判斷'],desc:'你在職場像高山裡的雲霧，平常不一定最吵，但方向感超強。你擅長看全局、提早預判問題，也很會把事情往更有效的結構推進。你不是想掌控一切，你只是看不得明明可以更好卻還在原地打轉。'},
+      INTP:{name:'星空沙漠',emoji:'🌌',tagline:'你不是分心，你是在同時跑很多個厲害的腦迴路',color:'#2D3561',bg:'#ECEEF8',traits:['抽象分析','知識連結','創意拆解'],desc:'你在職場很像星空下的沙漠，外表安靜，腦內卻超熱鬧。你擅長拆解問題、提出不同觀點，也常在別人沒想到的地方挖出新解法。你最強的不是跟著流程走，而是讓人突然發現：欸，好像真的可以這樣想。'},
+      ENTJ:{name:'城市天際線',emoji:'🌃',tagline:'局面越大，你越像終於上線',color:'#1A1A2E',bg:'#EBEBF5',traits:['決策推進','領導統整','高效執行'],desc:'你在職場像俐落發亮的城市天際線，清楚、強勢、有推進力。你很會整理混亂，也很會把人和資源拉到同一條線上。別人可能還在猶豫，你已經在想怎麼把結果做出來。'},
+      ENTP:{name:'活火山',emoji:'🌋',tagline:'你的點子不是多，是多到像在溢出',color:'#8B2500',bg:'#FAEEE8',traits:['高能發想','辯證能力','打破框架'],desc:'你在職場像活火山，反應快、點子多、超會把無聊會議炸出新火花。你不喜歡被過時規則綁住，也很擅長用新的切法讓事情重新有戲。你最大的本事，是把看似卡住的局突然扳成另一條路。'},
+      INFJ:{name:'極光夜空',emoji:'🌠',tagline:'你看的不只任務，還有人心和意義',color:'#4B0082',bg:'#F0ECF8',traits:['深度洞察','共感理解','理想驅動'],desc:'你在職場像極光夜空，表面平靜，但很會察覺空氣裡那些沒被說出來的訊號。你常常一邊做事，一邊也在想這件事對人、對團隊、對整體方向到底值不值得。你不是太敏感，你只是感知範圍比較廣。'},
+      INFP:{name:'秘境瀑布',emoji:'🍃',tagline:'溫柔不等於弱，很多靈感都長在你這種人身上',color:'#2E6B8A',bg:'#EAF4F8',traits:['價值感強','創意表達','細膩真誠'],desc:'你在職場像森林深處的瀑布，不一定搶前排，但你的觀點很真、很有自己的濃度。你很在意做的事是否跟價值一致，也常用獨特的方式把感受變成有感染力的內容。你不是慢熱，你只是對真實特別有要求。'},
+      ENFJ:{name:'向日葵田',emoji:'🌻',tagline:'你很會把人照亮，然後順便把局帶起來',color:'#8B6914',bg:'#FDF8E8',traits:['團隊感召','溝通協調','溫暖領導'],desc:'你在職場像一整片向日葵田，很會接住人，也很會推動事情往前。你能看見別人的亮點，知道什麼時候該鼓勵、什麼時候該整隊。跟你合作常有種感覺：明明事情很多，但莫名就比較願意一起撐。'},
+      ENFP:{name:'彩虹雨後',emoji:'🌈',tagline:'你是那種能把企劃做出靈魂的人',color:'#C4500A',bg:'#FDF3EC',traits:['靈感豐富','感染力強','人味連結'],desc:'你在職場像雨後彩虹，腦袋活、情緒感受力也強，常能把一件原本普通的任務做得更有亮點。你很懂人，也很懂怎麼把內容做得有溫度。你最強的不是照規則完成，而是讓事情完成後真的有人記得。'},
+      ISTJ:{name:'橡木老林',emoji:'🌲',tagline:'你不是古板，你是讓世界不要炸掉的那群人',color:'#2D5016',bg:'#EFF5E8',traits:['穩定可靠','細節管理','承諾感強'],desc:'你在職場像一片老林，安靜但超穩。你重視規則、細節與責任感，事情交給你通常就是讓人放心。你不太愛浮誇，但你的存在本身就很有份量，像專案的地基一樣，平常不搶鏡，卻不能沒有你。'},
+      ISFJ:{name:'靜謐湖泊',emoji:'🏞️',tagline:'你的穩，是很多人工作日常的安全感來源',color:'#1A5276',bg:'#EAF2F8',traits:['細膩照顧','穩定支援','高配合度'],desc:'你在職場像一座靜湖，溫柔、穩定，又很會照顧細節。你經常默默補位，讓合作變順、讓同事不至於太慌。你的強不是大聲，而是你總能在別人需要時剛好出現在對的位置。'},
+      ESTJ:{name:'繁忙港口',emoji:'⚓',tagline:'你很知道怎樣把事送上岸，而且準時',color:'#34495E',bg:'#EBF0F4',traits:['組織管理','果斷執行','高標準'],desc:'你在職場像高效運轉的港口，節奏清楚、動作俐落、資源安排得明明白白。你擅長制定規則與流程，讓專案不要陷入無效消耗。別人可能覺得你要求高，但老實說，有你在事情真的比較會成。'},
+      ESFJ:{name:'花園小鎮',emoji:'🌺',tagline:'你讓團隊不像上班，更像一群人真的在一起做事',color:'#7D3C98',bg:'#F5EBF8',traits:['社群凝聚','氛圍維護','同理協作'],desc:'你在職場像一座花園小鎮，有人味、有溫度，也很會把關係照顧好。你擅長感受團隊氛圍，知道怎樣讓合作不只是完成工作，而是真的形成互相支持的節奏。你不是在討好，你是在經營讓人願意留下的感覺。'},
+      ISTP:{name:'荒野峽谷',emoji:'🏜️',tagline:'話不多，但一到出事現場你就會變 MVP',color:'#784212',bg:'#F5EDE0',traits:['冷靜排錯','實作導向','臨場解決'],desc:'你在職場像荒野峽谷，低調、耐打、很有自己的判斷。你喜歡用實際驗證取代空談，遇到狀況時通常能快速找到問題點。你不是特別愛表現，但真的出包時，大家很容易第一個想到你。'},
+      ISFP:{name:'海岸日落',emoji:'🌅',tagline:'你不是在摸魚，你是在守住做事的手感與溫度',color:'#C0392B',bg:'#FAECEA',traits:['美感直覺','真實感受','柔韌應對'],desc:'你在職場像海岸日落，有自己的節奏與美感標準。你對細節、氛圍、呈現方式很敏銳，也很在意作品是不是有靈魂。你不一定想成為中心，但你做出來的東西往往很有個人質感。'},
+      ESTP:{name:'急湍激流',emoji:'🌊',tagline:'現場越亂，你越像終於找到主場',color:'#0E6655',bg:'#E8F8F5',traits:['快速反應','高壓應變','行動力強'],desc:'你在職場像一股急流，速度快、判斷快、出手也快。你很適合需要臨場決策、快速協調的情境，越是現場變動，你反而越能抓到節奏。你不太喜歡空轉，因為你本來就是那種先動再解的人。'},
+      ESFP:{name:'熱帶海灘',emoji:'🏖️',tagline:'有你在的團隊，比較有生命力也比較有笑聲',color:'#0A74A4',bg:'#E8F5FC',traits:['感染力強','互動自然','現場感十足'],desc:'你在職場像熱帶海灘，明亮、自在，很會把人帶進舒服又有活力的互動節奏。你擅長把壓力感拆掉，讓合作過程不至於太僵。你不是只會活絡氣氛，你其實也很懂怎樣讓人更願意一起往前。'}
+    };
+
+    const state = {
+      screen: 'intro',
+      index: 0,
+      answers: [],
+      selected: null,
+      copied: false,
+    };
+
+    const root = document.getElementById('root');
+
+    function mergeScores(list) {
+      const scores = { E:0,I:0,S:0,N:0,T:0,F:0,J:0,P:0 };
+      list.forEach(item => {
+        Object.entries(item).forEach(([key, val]) => { scores[key] += val; });
+      });
+      const type =
+        (scores.E >= scores.I ? 'E' : 'I') +
+        (scores.S >= scores.N ? 'S' : 'N') +
+        (scores.T >= scores.F ? 'T' : 'F') +
+        (scores.J >= scores.P ? 'J' : 'P');
+      return { scores, type };
+    }
+
+    function barPercent(a, b) {
+      const total = a + b || 1;
+      return Math.round((a / total) * 100);
+    }
+
+    function axisDetail(axis, scores) {
+      const pair = {
+        EI: ['E', 'I'],
+        SN: ['S', 'N'],
+        TF: ['T', 'F'],
+        JP: ['J', 'P'],
+      }[axis];
+      const [leftKey, rightKey] = pair;
+      const left = scores[leftKey];
+      const right = scores[rightKey];
+      const meta = AXIS_META[axis];
+      const dominantLeft = left >= right;
+      const leftPercent = barPercent(left, right);
+      return {
+        title: AXIS_LABEL[axis],
+        leftKey, rightKey,
+        leftLabel: meta.left,
+        rightLabel: meta.right,
+        left, right,
+        dominant: dominantLeft ? meta.left : meta.right,
+        copy: dominantLeft ? meta.leftDesc : meta.rightDesc,
+        leftPercent,
+        rightPercent: 100 - leftPercent,
+        color: AXIS_COLORS[axis],
+      };
+    }
+
+    function startQuiz() {
+      state.screen = 'quiz';
+      state.index = 0;
+      state.answers = [];
+      state.selected = null;
+      state.copied = false;
+      render();
+    }
+
+    function selectOption(i) {
+      state.selected = i;
+      syncSelection();
+    }
+
+    function syncSelection() {
+      const cards = document.querySelectorAll('.option-card');
+      cards.forEach((card, idx) => {
+        card.classList.toggle('is-selected', idx === state.selected);
+      });
+      const nextBtn = document.querySelector('.next-button');
+      if (nextBtn) {
+        nextBtn.disabled = state.selected === null;
+        nextBtn.classList.toggle('is-active', state.selected !== null);
+      }
+    }
+
+    function nextQuestion() {
+      if (state.selected === null) return;
+      const question = QUESTIONS[state.index];
+      const picked = question.options[state.selected];
+      state.answers.push(picked.scores);
+      state.selected = null;
+      if (state.index === QUESTIONS.length - 1) {
+        state.screen = 'result';
+      } else {
+        state.index += 1;
+      }
+      render();
+    }
+
+    function restartQuiz() {
+      state.screen = 'intro';
+      state.index = 0;
+      state.answers = [];
+      state.selected = null;
+      state.copied = false;
+      render();
+    }
+
+    async function copyResult() {
+      const summary = mergeScores(state.answers);
+      const result = RESULTS[summary.type];
+      const text = `我的結果是 ${summary.type}｜${result.name} ${result.emoji}\n${result.tagline}\n${result.desc}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        state.copied = true;
+        render();
+        setTimeout(() => {
+          state.copied = false;
+          render();
+        }, 1800);
+      } catch (_) {}
+    }
+
+    function introView() {
+      return `
+        <div class="panel intro-panel fade-up">
+          <div class="hero-orb">💼</div>
+          <p class="eyebrow">INNER TYPE QUIZ</p>
+          <h1 class="hero-title">你的 <br><em>人格地貌</em> 是什麼？</h1>
+          <p class="hero-desc">12 題、每題 4 個選項，從情境選擇慢慢看出你的做事節奏。<br>不是那種硬邦邦的人格測驗，比較像是把你的反應模式溫柔拆開來看。</p>
+          <div class="pill-grid">
+            <span class="mini-pill" style="background:#EBF2FB;color:#4A7FB5">E / I 能量來源</span>
+            <span class="mini-pill" style="background:#EBF5EC;color:#4A8B52">S / N 資訊接收</span>
+            <span class="mini-pill" style="background:#FDF3E9;color:#C4956A">T / F 決策方式</span>
+            <span class="mini-pill" style="background:#F3EBF8;color:#9B72C0">J / P 工作節奏</span>
+          </div>
+          <button type="button" class="primary-button" onclick="startQuiz()">開始測驗 <span>→</span></button>
+        </div>
+      `;
+    }
+
+    function quizView() {
+      const q = QUESTIONS[state.index];
+      const progress = Math.round((state.index / QUESTIONS.length) * 100);
+      return `
+        <div class="panel">
+          <div class="progress-wrap">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${progress}%;background:${AXIS_COLORS[q.axis]}"></div>
+            </div>
+            <div class="question-meta">
+              <span class="axis-badge" style="background:${AXIS_BG[q.axis]};color:${AXIS_COLORS[q.axis]}">${AXIS_LABEL[q.axis]}</span>
+              <span class="count-text">${state.index + 1} / ${QUESTIONS.length}</span>
+            </div>
+          </div>
+          <div class="question-head">
+            <div class="question-emoji">${q.emoji}</div>
+            <h2 class="question-title">${q.text}</h2>
+            
+          </div>
+          <div class="option-list">
+            ${q.options.map((opt, i) => `
+              <button type="button" class="option-card ${state.selected === i ? 'is-selected' : ''}" onclick="selectOption(${i})">
+                <span class="option-index">${['A','B','C','D'][i]}</span>
+                <span>${opt.label}</span>
+              </button>
+            `).join('')}
+          </div>
+          <button type="button" class="next-button ${state.selected !== null ? 'is-active' : ''}" onclick="nextQuestion()" ${state.selected === null ? 'disabled' : ''}>
+            ${state.index === QUESTIONS.length - 1 ? '查看結果' : '下一題'}
+          </button>
+        </div>
+      `;
+    }
+
+    function resultView() {
+      const summary = mergeScores(state.answers);
+      const result = RESULTS[summary.type];
+      const dimensions = ['EI','SN','TF','JP'].map(axis => axisDetail(axis, summary.scores));
+      return `
+        <div class="fade-up">
+          <div class="result-hero" style="background:${result.bg}">
+            <div class="result-icon" style="background:${result.color}20">${result.emoji}</div>
+            <p class="result-type">${summary.type}</p>
+            <p class="result-label">你的人格地貌是</p>
+            <h2 class="result-name">${result.name}</h2>
+            <p class="result-tagline">${result.tagline}</p>
+          </div>
+          <div class="result-body">
+            <p class="result-description">${result.desc}</p>
+            <div class="trait-list">
+              ${result.traits.map(item => `<span class="trait-pill" style="background:${result.color}18;color:${result.color}">${item}</span>`).join('')}
+            </div>
+<section class="analysis-box">
+              <p class="analysis-title">四個維度分析</p>
+              ${dimensions.map(dim => `
+                <div class="dimension-block">
+                  <div class="dimension-top">
+                    <div>
+                      <p class="dimension-title">${dim.title}</p>
+                      <p class="dimension-dominant">目前傾向：${dim.dominant}</p>
+                    </div>
+                    <div class="dimension-score">${dim.leftKey} ${dim.left} · ${dim.rightKey} ${dim.right}</div>
+                  </div>
+                  <div class="dimension-row">
+                    <span>${dim.leftLabel}</span>
+                    <span>${dim.rightLabel}</span>
+                  </div>
+                  <div class="dimension-track split-track" aria-hidden="true">
+                    <div class="dimension-segment left" style="flex-grow:${Math.max(dim.left, 0.01)};background:${dim.color}"></div>
+                    <div class="dimension-segment right" style="flex-grow:${Math.max(dim.right, 0.01)};background:${dim.color}"></div>
+                  </div>
+                  <div class="dimension-copy">${dim.copy}</div>
+                </div>
+              `).join('')}
+            </section>
+            <div class="action-row">
+              <button type="button" class="ghost-button" onclick="restartQuiz()">重新測驗</button>
+              <button type="button" class="primary-button compact" onclick="copyResult()">${state.copied ? '已複製結果' : '複製結果文字'}</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function render() {
+      let inner = '';
+      if (state.screen === 'intro') inner = introView();
+      if (state.screen === 'quiz') inner = quizView();
+      if (state.screen === 'result') inner = resultView();
+
+      root.innerHTML = `
+        <main class="page-shell">
+          <div class="ambient ambient-left"></div>
+          <div class="ambient ambient-right"></div>
+          <section class="quiz-card">${inner}</section>
+          
+        </main>
+      `;
+    }
+
+    window.startQuiz = startQuiz;
+    window.selectOption = selectOption;
+    window.nextQuestion = nextQuestion;
+    window.restartQuiz = restartQuiz;
+    window.copyResult = copyResult;
+
+    render();
+  </script>
+</body>
+</html>
